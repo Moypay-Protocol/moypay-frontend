@@ -1,0 +1,72 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { request } from "graphql-request";
+
+import { urlSubgraph } from "@/lib/constants";
+import { queryEmployeeListsByOrganization } from "@/lib/graphql/employee-lists.query";
+import { EmployeeListsResponse } from "@/types/graphql/employee.type";
+
+export const useEmployeeListsByOrganization = ({
+  organizationAddress,
+  enabled = true,
+}: {
+  organizationAddress: string;
+  enabled?: boolean;
+}) => {
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery<EmployeeListsResponse>({
+    queryKey: ["employeeListsByOrganization", organizationAddress],
+    queryFn: async ({ pageParam }: { pageParam?: unknown }) => {
+      if (!organizationAddress) throw new Error("Address is required");
+
+      return await request<EmployeeListsResponse>(
+        urlSubgraph,
+        queryEmployeeListsByOrganization(
+          organizationAddress,
+          pageParam as string | null,
+        ),
+      );
+    },
+    initialPageParam: null,
+    getNextPageParam: (lastPage) =>
+      lastPage.employeeLists.pageInfo.hasNextPage
+        ? lastPage.employeeLists.pageInfo.endCursor
+        : undefined,
+    enabled: !!organizationAddress && enabled,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+
+  const allItems =
+    data?.pages.flatMap((page) => page.employeeLists.items) ?? [];
+
+  const totalCount = data?.pages[0]?.employeeLists.totalCount ?? 0;
+  const pageInfo = data?.pages.at(-1)?.employeeLists.pageInfo;
+
+  return {
+    data: allItems,
+    isLoading: isLoading || isFetchingNextPage,
+    isError,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    fetchAllPages: async () => {
+      while (hasNextPage) {
+        await fetchNextPage();
+      }
+    },
+    totalCount,
+    pageInfo,
+    refetch,
+  };
+};

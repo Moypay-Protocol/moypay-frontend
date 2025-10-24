@@ -7,6 +7,7 @@ import "./globals.css";
 import AdaptiveLayout from "@/components/layout/adaptive-layout";
 import Providers from "@/components/providers";
 import { siteConfig } from "@/config/site";
+import { FarcasterInit } from "@/components/farcaster-init";
 
 const lexend = Lexend({
   variable: "--font-roboto-mono",
@@ -58,7 +59,35 @@ export default async function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (typeof window !== 'undefined') {
+                    const checkSDK = setInterval(() => {
+                      if (window.sdk && window.sdk.actions && window.sdk.actions.ready) {
+                        clearInterval(checkSDK);
+                        window.sdk.actions.ready().then(() => {
+                          console.log('✅ Farcaster SDK ready() called successfully!');
+                        }).catch((err) => {
+                          console.error('❌ Farcaster SDK ready() failed:', err);
+                        });
+                      }
+                    }, 100);
+                    setTimeout(() => clearInterval(checkSDK), 5000);
+                  }
+                } catch (e) {
+                  console.error('Error initializing Farcaster SDK:', e);
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={`${lexend.className} antialiased bg-background`}>
+        <FarcasterInit />
         <Providers>
           <AdaptiveLayout>{children}</AdaptiveLayout>
         </Providers>

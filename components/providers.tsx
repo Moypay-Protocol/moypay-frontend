@@ -8,6 +8,7 @@ import { OnchainKitProvider } from "@coinbase/onchainkit";
 import { WagmiProvider } from "wagmi";
 
 import { ThemeProvider } from "./theme-provider";
+import { ChainGuard } from "./chain-guard";
 
 import { config } from "@/lib/wagmi";
 
@@ -27,6 +28,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
+            <ChainGuard />
             {children}
           </QueryClientProvider>
         </WagmiProvider>

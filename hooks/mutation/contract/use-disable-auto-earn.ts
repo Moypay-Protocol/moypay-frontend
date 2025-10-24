@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { baseSepolia } from "wagmi/chains";
 
 import { config } from "@/lib/wagmi";
 import { OrganizationABI } from "@/lib/abis/organization.abi";
@@ -23,7 +24,7 @@ const STEP_TEMPLATES: Step[] = [
 ];
 
 export const useDisableAutoEarn = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, chain } = useAccount();
 
   const [steps, setSteps] = useState<Step[]>(STEP_TEMPLATES);
   const [txHash, setTxHash] = useState<HexAddress | null>(null);
@@ -55,6 +56,9 @@ export const useDisableAutoEarn = () => {
         updateStepStatus(1, "loading");
 
         if (!userAddress) throw new Error("User not connected");
+        if (!chain || chain.id !== baseSepolia.id) {
+          throw new Error("Please switch to Base Sepolia network");
+        }
 
         updateStepStatus(1, "success");
         updateStepStatus(2, "loading");
@@ -64,6 +68,7 @@ export const useDisableAutoEarn = () => {
           abi: OrganizationABI,
           functionName: "disableAutoEarn",
           args: [userAddress, protocolAddress],
+          chainId: baseSepolia.id,
         });
 
         const result = await waitForTransactionReceipt(config, {

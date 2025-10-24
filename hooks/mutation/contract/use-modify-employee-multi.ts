@@ -7,6 +7,7 @@ import {
   writeContract,
 } from "wagmi/actions";
 import { erc20Abi } from "viem";
+import { baseSepolia } from "wagmi/chains";
 
 import { config } from "@/lib/wagmi";
 import { OrganizationABI } from "@/lib/abis/organization.abi";
@@ -46,7 +47,7 @@ interface ModifyEmployeeParams {
 }
 
 export const useModifyEmployeeMulti = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, chain } = useAccount();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const updateTransactionStatus = (
@@ -104,6 +105,9 @@ export const useModifyEmployeeMulti = () => {
     }: ModifyEmployeeParams) => {
       try {
         if (!userAddress) throw new Error("User not connected");
+        if (!chain || chain.id !== baseSepolia.id) {
+          throw new Error("Please switch to Base Sepolia network");
+        }
 
         const needsNameUpdate =
           newName !== undefined &&
@@ -182,6 +186,7 @@ export const useModifyEmployeeMulti = () => {
               abi: OrganizationABI,
               functionName: "setEmployeeName",
               args: [employeeAddress, newName],
+              chainId: baseSepolia.id,
             });
 
             const result = await waitForTransactionReceipt(config, {
@@ -263,6 +268,7 @@ export const useModifyEmployeeMulti = () => {
                   abi: erc20Abi,
                   functionName: "approve",
                   args: [organizationAddress, valueToBigInt(additionalAmount)],
+                  chainId: baseSepolia.id,
                 });
 
                 const receipt = await waitForTransactionReceipt(config, {
@@ -282,6 +288,7 @@ export const useModifyEmployeeMulti = () => {
                 abi: OrganizationABI,
                 functionName: "deposit",
                 args: [valueToBigInt(additionalAmount)],
+                chainId: baseSepolia.id,
               });
 
               const resultDeposit = await waitForTransactionReceipt(config, {
@@ -310,6 +317,7 @@ export const useModifyEmployeeMulti = () => {
                 valueToBigInt(startStream || Math.floor(Date.now() / 1000)),
                 Boolean(isNow ?? true),
               ],
+              chainId: baseSepolia.id,
             });
 
             const result = await waitForTransactionReceipt(config, {
@@ -368,6 +376,7 @@ export const useModifyEmployeeMulti = () => {
               abi: OrganizationABI,
               functionName: "setEmployeeStatus",
               args: [employeeAddress, newStatus],
+              chainId: baseSepolia.id,
             });
 
             const result = await waitForTransactionReceipt(config, {

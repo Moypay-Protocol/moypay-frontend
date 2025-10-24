@@ -7,6 +7,7 @@ import {
   writeContract,
 } from "wagmi/actions";
 import { erc20Abi } from "viem";
+import { baseSepolia } from "wagmi/chains";
 
 import { config } from "@/lib/wagmi";
 import { OrganizationABI } from "@/lib/abis/organization.abi";
@@ -31,7 +32,7 @@ const STEP_TEMPLATES: Step[] = [
 ];
 
 export const useDepositOrganization = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, chain } = useAccount();
 
   const [steps, setSteps] = useState<Step[]>(STEP_TEMPLATES);
   const [txHash, setTxHash] = useState<HexAddress | null>(null);
@@ -62,6 +63,9 @@ export const useDepositOrganization = () => {
         updateStepStatus(1, "loading");
 
         if (!userAddress) throw new Error("User not connected");
+        if (!chain || chain.id !== baseSepolia.id) {
+          throw new Error("Please switch to Base Sepolia network");
+        }
 
         const denormalizedSalary = denormalize(salary, 18);
         const mockUSDC = contractAddresses.mockUSDC;
@@ -82,6 +86,7 @@ export const useDepositOrganization = () => {
             abi: erc20Abi,
             functionName: "approve",
             args: [organizationAddress, valueToBigInt(denormalizedSalary)],
+            chainId: baseSepolia.id,
           });
 
           const receipt = await waitForTransactionReceipt(config, {
@@ -101,6 +106,7 @@ export const useDepositOrganization = () => {
           abi: OrganizationABI,
           functionName: "deposit",
           args: [valueToBigInt(denormalizedSalary)],
+          chainId: baseSepolia.id,
         });
 
         const result = await waitForTransactionReceipt(config, {

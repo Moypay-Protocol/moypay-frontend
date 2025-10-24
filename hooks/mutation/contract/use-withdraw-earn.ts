@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { baseSepolia } from "wagmi/chains";
 
 import { config } from "@/lib/wagmi";
 import { OrganizationABI } from "@/lib/abis/organization.abi";
@@ -24,7 +25,7 @@ const STEP_TEMPLATES: Step[] = [
 ];
 
 export const useWithdrawEarn = ({ onSuccess }: { onSuccess?: () => void }) => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, chain } = useAccount();
 
   const [steps, setSteps] = useState<Step[]>(STEP_TEMPLATES);
   const [txHash, setTxHash] = useState<HexAddress | null>(null);
@@ -59,6 +60,9 @@ export const useWithdrawEarn = ({ onSuccess }: { onSuccess?: () => void }) => {
         updateStepStatus(1, "loading");
 
         if (!userAddress) throw new Error("User not connected");
+        if (!chain || chain.id !== baseSepolia.id) {
+          throw new Error("Please switch to Base Sepolia network");
+        }
 
         const denormalizedAmount = denormalize(amount, 18);
 
@@ -75,6 +79,7 @@ export const useWithdrawEarn = ({ onSuccess }: { onSuccess?: () => void }) => {
             valueToBigInt(denormalizedAmount),
             isOffRamp,
           ],
+          chainId: baseSepolia.id,
         });
 
         const result = await waitForTransactionReceipt(config, {

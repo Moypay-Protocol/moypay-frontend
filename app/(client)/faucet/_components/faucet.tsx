@@ -7,7 +7,6 @@ import { ArrowUpRight } from "lucide-react";
 import { useAccount } from "wagmi";
 
 import { Button } from "@/components/ui/button";
-import { useSwitchToBaseSepolia } from "@/hooks/use-switch-to-base-sepolia";
 import TransactionDialog from "@/components/dialog/dialog-transactions";
 import { useMint } from "@/hooks/mutation/contract/use-mint";
 import { Separator } from "@/components/ui/separator";
@@ -19,7 +18,6 @@ import { useBalanceCustom } from "@/hooks/query/contract/use-balance-custom";
 
 export default function Faucet() {
   const { address: userAddress } = useAccount();
-  const { isWrongNetwork, switchToBaseSepolia } = useSwitchToBaseSepolia();
   const [amount] = useState(50000);
   const [transactionOpen, setTransactionOpen] = useState(false);
   const { mutation, dialogStatus, steps, txHash } = useMint({
@@ -37,10 +35,6 @@ export default function Faucet() {
   });
 
   const handleClaim = () => {
-    if (isWrongNetwork) {
-      switchToBaseSepolia();
-      return;
-    }
     setTransactionOpen(true);
     mutation.mutate({
       amount,
@@ -130,9 +124,7 @@ export default function Faucet() {
               variant="default"
               onClick={handleClaim}
             >
-              {isWrongNetwork
-                ? "Switch to Base Sepolia"
-                : `Claim ${formatCompactNumber(amount)} USDC`}
+              Claim {formatCompactNumber(amount)} USDC
             </Button>
           </div>
         </Card>

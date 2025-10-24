@@ -1,11 +1,12 @@
-import { useAccount, useSwitchChain } from "wagmi";
+import { useAccount, useSwitchChain, useChainId } from "wagmi";
 import { baseSepolia } from "wagmi/chains";
 
 export const useSwitchToBaseSepolia = () => {
-  const { chain, isConnected } = useAccount();
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
-  const isWrongNetwork = isConnected && chain && chain.id !== baseSepolia.id;
+  const isWrongNetwork = isConnected && chainId !== baseSepolia.id;
 
   return {
     isWrongNetwork,

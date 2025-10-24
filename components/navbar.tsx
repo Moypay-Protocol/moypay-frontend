@@ -7,9 +7,8 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
-// import { ConnectButtonCustom } from "./wallet/connect-button-custom";
-
 import { ConnectButton } from "./wallet/connect-button";
+import { NetworkSwitcher } from "./wallet/network-switcher";
 
 import { siteConfig } from "@/config/site";
 
@@ -76,6 +75,9 @@ const Navbar: React.FC<NavbarProps> = () => {
         </div>
 
         <div className="flex items-center gap-3 z-50">
+          <div className="hidden lg:flex">
+            <NetworkSwitcher />
+          </div>
           <div className="lg:hidden">
             <button
               aria-expanded={isMobileMenuOpen}
@@ -97,6 +99,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden mt-4 py-5">
           <div className="flex flex-col gap-10">
+            <NetworkSwitcher />
             <div className="flex flex-col gap-2">
               {siteConfig.navItems.map((item) => (
                 <Link

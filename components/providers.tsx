@@ -3,7 +3,7 @@
 import "process/browser";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { baseSepolia } from "wagmi/chains";
+import { baseSepolia } from "viem/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import { WagmiProvider } from "wagmi";
 

@@ -12,8 +12,8 @@ export const urlExplorer = ({
       explorer: string;
     };
   } = {
-    1114: {
-      explorer: "https://scan.test2.btcs.network",
+    84532: {
+      explorer: "https://sepolia.basescan.org",
     },
   };
 

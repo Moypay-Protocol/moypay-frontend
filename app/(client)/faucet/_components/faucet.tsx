@@ -100,7 +100,7 @@ export default function Faucet() {
                 <Link
                   className="group hover:underline"
                   href={urlExplorer({
-                    chainId: 1114,
+                    chainId: 84532,
                     address: mockUSDCAddress,
                   })}
                   target="_blank"

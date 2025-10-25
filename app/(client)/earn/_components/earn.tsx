@@ -124,7 +124,7 @@ export default function Earn() {
                           <Link
                             className="group hover:underline"
                             href={urlExplorer({
-                              chainId: 1114,
+                              chainId: 84532,
                               address: item.address,
                             })}
                             target="_blank"

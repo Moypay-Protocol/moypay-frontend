@@ -193,7 +193,7 @@ export default function Organization({ id }: OrganizationProps) {
                         <Link
                           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline transition-all duration-200 w-fit"
                           href={urlExplorer({
-                            chainId: 1114,
+                            chainId: 84532,
                             address: org.organization,
                           })}
                           target="_blank"
@@ -473,7 +473,7 @@ export default function Organization({ id }: OrganizationProps) {
                               <Link
                                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary hover:underline transition-all duration-200 w-fit truncate"
                                 href={urlExplorer({
-                                  chainId: 1114,
+                                  chainId: 84532,
                                   address: employee.employee,
                                 })}
                                 target="_blank"

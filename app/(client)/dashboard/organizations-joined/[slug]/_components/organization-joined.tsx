@@ -197,7 +197,7 @@ export default function OrganizationJoined({ id }: OrganizationProps) {
                         <Link
                           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline transition-all duration-200 w-fit"
                           href={urlExplorer({
-                            chainId: 1114,
+                            chainId: 84532,
                             address: org.organization,
                           })}
                           rel="noopener noreferrer"

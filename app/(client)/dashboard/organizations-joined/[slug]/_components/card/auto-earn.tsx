@@ -159,7 +159,7 @@ export default function AutoEarnCard({
                       <Link
                         className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                         href={urlExplorer({
-                          chainId: 1114,
+                          chainId: 84532,
                           txHash: autoEarnData.transactionHash,
                         })}
                         rel="noopener noreferrer"
